@@ -1,0 +1,42 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# A Travis CI configuration file.
+
+sudo: required
+dist: xenial
+jdk: openjdk8
+language:
+  - java
+  - node_js
+services:
+  - docker
+
+notifications:
+  email: false
+  webhooks:
+    urls:
+      # travis2slack webhook to enable DMs on openwhisk-team.slack.com to PR authors with TravisCI results
+      secure: "aYhi6V7NFEbfIPvUGBYgqbdM+EIoEMd/RVjks4anpeEQCs/y8Ok4bxdLYVAGE74/rTjcNEKmwfdUiIf3Cs/VHnWCykAZnNeJFQpDQwfiwjy1JD1nZ9jKZYFIueWA5ZY3AT2yKnn7F1KA56nPjtv3a2rjBc3xNk4fD3iBjSIJdJF4MY0Cy7uB8THKtuz/Ppy7flDpTgxnLwaVTxqF6D4vwCqeCfJcf+esPiqZ3MW0SUs6DxGeXLUj4DFuEYr8rgOW55hh22Eh6tHr38R/Bk/hLFWUgXN8hLsLg3LEbQj3kILpjf4YU42KYMRMuir8xh6RWbhjnAtWoX6WvCxwSoK/b0I3VfLql4QTmAJ+eJURWEKpf5BuGjdwCbw/sdTrSxz/0O5oAa4Vl+QdTmxM2wBc2TlHyJMk3OSrIzkFhclrRm1Jok4plCCyh2Vz6bywAYwxkCiM2eyQ06sYEgWfMXAR8cJynAuHBCkcFSgC9kcZCcriuggPi5szoqWXxoixi75BpkKixlSWXIY9zQYvdA6yr7fd+QKViLHrs1IJgpt2c0qeDl6d4KWZdlmXV0haG0YsMN3mMehmJlXH1v2zCjfZJx8neBhbu5n6wH4xAtIjePwhs7E52PhTOw4liwrAezJ06pqyCtdMVofiTCnwjUEkTEANUazM2Fdkv/ND2hhsiv8="
+
+install: true
+
+before_install:
+  - ./tools/travis/setup.sh
+
+script:
+  - ./tools/travis/build.sh
