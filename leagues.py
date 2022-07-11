@@ -1,13 +1,25 @@
 import requests
 
+'''params and default values
+ id,
+ name,
+ country,
+ season,
+ type,
+ search
+'''
 def main(dict):
-    url = "https://v1.baseball.api-sports.io/leagues"
-
+    
+    url = "https://v1.basketball.api-sports.io/leagues"
     headers = {
     'x-rapidapi-key': '7f31bcaea1acc7e331e4356d2bf9072f',
-    'x-rapidapi-host': 'v1.baseball.api-sports.io'
+    'x-rapidapi-host': 'v1.basketball.api-sports.io'
     }
 
     response = requests.request("GET", url, headers=headers, params=dict)
-    return response.json()
+
+    ids = []
+    for i in response.json()['response']:
+        ids.append(i["id"])
+    return {"league" : ids}
 

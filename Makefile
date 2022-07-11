@@ -404,16 +404,39 @@ destroy: stop rm
 .PHONY: create-actions
 create-actions:
 	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i package create sportInfo 
+	
 	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action create sportInfo/games games.py --web true\
-		-a parameters '[ {"name":"date", "required":false}, {"name":"league", "required":false}, {"name":"season", "required":false}, {"name":"team", "required":false}]' 
+		-a parameters '[ {"name":"date", "required":false}, {"name":"league", "required":false}, {"name":"season", "required":false}, {"name":"team", "required":false}]' 	
 	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action create sportInfo/teams teams.py --web true\
 		-a parameters '[ {"name":"id", "required":false}, {"name":"name", "required":false},{"name":"country", "required":false}, {"name":"season", "required":false}, {"name":"league", "required":false},  {"name":"search", "required":false}]' 
-	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action create sportInfo/seasons seasons.py --web true
+#WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action create sportInfo/seasons seasons.py --web true
 	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action create sportInfo/leagues leagues.py --web true\
 		-a parameters '[ {"name":"id", "required":false},{"name":"country", "required":false}, {"name":"name", "required":false}, {"name":"season", "required":false}, {"name":"type", "required":false},  {"name":"search", "required":false}]' 
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action create sportInfo/gamesByTeam --sequence /guest/sportInfo/teams,/guest/sportInfo/games
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action create sportInfo/gamesByLeague --sequence /guest/sportInfo/leagues,/guest/sportInfo/games
+
 	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i package create news
-	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action create new/newsFromGame teams.py --web true\
-		-a parameters '[ {"name":"gameId", "required":true}]' 
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action create news/newsFromGame newsFromGame.py --web true -a parameters '[ {"name":"gameId", "required":true}]'
+
+
+.PHONY: update-actions
+update-actions:
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i package update sportInfo 	
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action update sportInfo/games games.py --web true\
+		-a parameters '[ {"name":"date", "required":false}, {"name":"league", "required":false}, {"name":"season", "required":false}, {"name":"team", "required":false}]' 	
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action update sportInfo/teams teams.py --web true\
+		-a parameters '[ {"name":"id", "required":false}, {"name":"name", "required":false},{"name":"country", "required":false}, {"name":"season", "required":false}, {"name":"league", "required":false},  {"name":"search", "required":false}]' 
+#WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action create sportInfo/seasons seasons.py --web true
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action update sportInfo/leagues leagues.py --web true\
+		-a parameters '[ {"name":"id", "required":false},{"name":"country", "required":false}, {"name":"name", "required":false}, {"name":"season", "required":false}, {"name":"type", "required":false},  {"name":"search", "required":false}]' 
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action delete sportInfo/gamesByTeam
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action create sportInfo/gamesByTeam --sequence /guest/sportInfo/teams,/guest/sportInfo/games
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action delete sportInfo/gamesByLeague
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action create sportInfo/gamesByLeague --sequence /guest/sportInfo/leagues,/guest/sportInfo/games
+
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i package update news
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action update news/newsFromGame newsFromGame.py
+#wsk -i action create 	
 
 # This task runs a hello-world function
 #   1. It creates the function

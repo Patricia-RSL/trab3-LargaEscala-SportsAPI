@@ -1,5 +1,6 @@
 import requests
 import json
+import openwhisk
 
 def main(dict):
     '''res = requests.get("https://172.22.254.115/api/v1/web/guest/sportInfo/games", params={'id': dict.get('id')})
@@ -8,12 +9,12 @@ def main(dict):
 '''
     headers = {
     'x-rapidapi-key': '7f31bcaea1acc7e331e4356d2bf9072f',
-    'x-rapidapi-host': 'v1.baseball.api-sports.io'
+    'x-rapidapi-host': 'v1.basketball.api-sports.io'
     }
 
     res_dict = {'results':0}
     if(dict.get('gameId') is not None):
-        res = requests.request("GET",  "https://v1.baseball.api-sports.io/games" , params={'id': dict.get('gameId')}, headers=headers)    
+        res = requests.request("GET",  "https://v1.basketball.api-sports.io/games" , params={'id': dict.get('gameId')}, headers=headers)    
         res_dict = json.loads(res.text)
 
     #print(res_dict)
