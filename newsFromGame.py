@@ -1,12 +1,8 @@
 import requests
 import json
-import openwhisk
 
 def main(dict):
-    '''res = requests.get("https://172.22.254.115/api/v1/web/guest/sportInfo/games", params={'id': dict.get('id')})
-    print(res.json()) 
-    res_dict = json.loads(res.text)
-'''
+    
     headers = {
     'x-rapidapi-key': '7f31bcaea1acc7e331e4356d2bf9072f',
     'x-rapidapi-host': 'v1.basketball.api-sports.io'
@@ -30,3 +26,4 @@ def main(dict):
     response = requests.request("GET", "https://newsdata.io/api/1/news?"+query, params=payload)
     print(response.json())
     return response.json()
+#main({"gameId": 187307})

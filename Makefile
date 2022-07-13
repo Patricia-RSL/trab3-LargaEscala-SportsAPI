@@ -67,7 +67,7 @@ endif
 lean:	DOCKER_COMPOSE_FILE=docker-compose-lean.yml
 lean:	download-src download-cli docker-pull-lean run hello-world quick-start-info
 
-quick-start: download-src download-cli docker-pull run create-actions quick-start-info
+quick-start: download-src download-cli docker-pull run add-catalog create-actions create-triggers create-rules quick-start-info
 
 add-catalog: download-catalog init-catalog
 
@@ -409,7 +409,6 @@ create-actions:
 		-a parameters '[ {"name":"date", "required":false}, {"name":"league", "required":false}, {"name":"season", "required":false}, {"name":"team", "required":false}]' 	
 	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action create sportInfo/teams teams.py --web true\
 		-a parameters '[ {"name":"id", "required":false}, {"name":"name", "required":false},{"name":"country", "required":false}, {"name":"season", "required":false}, {"name":"league", "required":false},  {"name":"search", "required":false}]' 
-#WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action create sportInfo/seasons seasons.py --web true
 	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action create sportInfo/leagues leagues.py --web true\
 		-a parameters '[ {"name":"id", "required":false},{"name":"country", "required":false}, {"name":"name", "required":false}, {"name":"season", "required":false}, {"name":"type", "required":false},  {"name":"search", "required":false}]' 
 	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action create sportInfo/gamesByTeam --sequence /guest/sportInfo/teams,/guest/sportInfo/games
@@ -418,6 +417,32 @@ create-actions:
 	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i package create news
 	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action create news/newsFromGame newsFromGame.py --web true -a parameters '[ {"name":"gameId", "required":true}]'
 
+.PHONY: create-triggers
+create-triggers:
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i trigger update /sportInfo/getGamesEvent
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i trigger update /sportInfo/getGamesByTeamEvent
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI)  -i trigger update /sportInfo/getGamesByLeagueEvent
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i trigger update /sportInfo/getNewsByGameIdEvent
+	
+
+.PHONY: create-rules
+create-rules:
+#WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i rule delete getGamesRule	
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i rule create getGamesRule getGamesEvent guest/sportInfo/games
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i rule disable getGamesRule
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i rule enable getGamesRule
+#WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i rule delete getGamesByTeam
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i rule create getGamesByTeam getGamesByTeamEvent guest/sportInfo/gamesByTeam
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i rule disable getGamesByTeam
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i rule enable getGamesByTeam
+#	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i rule delete getGamesByLeague
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i rule create getGamesByLeague getGamesByLeagueEvent guest/sportInfo/gamesByLeague
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i rule disable getGamesByLeague
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i rule enable getGamesByLeague
+#	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i rule delete getNewsFromGame
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i rule create getNewsFromGame getNewsByGameIdEvent guest/news/newsFromGame
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i rule disable getNewsFromGame
+	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i rule enable getNewsFromGame
 
 .PHONY: update-actions
 update-actions:
@@ -426,7 +451,6 @@ update-actions:
 		-a parameters '[ {"name":"date", "required":false}, {"name":"league", "required":false}, {"name":"season", "required":false}, {"name":"team", "required":false}]' 	
 	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action update sportInfo/teams teams.py --web true\
 		-a parameters '[ {"name":"id", "required":false}, {"name":"name", "required":false},{"name":"country", "required":false}, {"name":"season", "required":false}, {"name":"league", "required":false},  {"name":"search", "required":false}]' 
-#WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action create sportInfo/seasons seasons.py --web true
 	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action update sportInfo/leagues leagues.py --web true\
 		-a parameters '[ {"name":"id", "required":false},{"name":"country", "required":false}, {"name":"name", "required":false}, {"name":"season", "required":false}, {"name":"type", "required":false},  {"name":"search", "required":false}]' 
 	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action delete sportInfo/gamesByTeam
@@ -436,7 +460,8 @@ update-actions:
 
 	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i package update news
 	WSK_CONFIG_FILE=$(WSK_CONFIG_FILE) $(WSK_CLI) -i action update news/newsFromGame newsFromGame.py
-#wsk -i action create 	
+
+
 
 # This task runs a hello-world function
 #   1. It creates the function
